@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = React.useCallback(async () => {
+  const signInWithGoogle = async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  };
 
   const signOut = async () => {
     setLoading(true);
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const value = React.useMemo(() => ({ user, loading, signInWithGoogle, signOut }), [user, loading, signInWithGoogle]);
+  const value = { user, loading, signInWithGoogle, signOut };
 
   return (
     <AuthContext.Provider value={value}>
