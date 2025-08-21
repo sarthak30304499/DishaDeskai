@@ -1,10 +1,10 @@
 'use client';
 
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" viewBox="0 0 48 48">
@@ -16,7 +16,6 @@ const GoogleIcon = () => (
 );
 
 export default function LoginPage() {
-  const { signInWithGoogle, loading } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
@@ -26,23 +25,19 @@ export default function LoginPage() {
       </div>
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>Sign in to continue to your dashboard.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button
-            onClick={signInWithGoogle}
-            disabled={loading}
-            className="w-full"
-            variant="outline"
-          >
-            {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
+          <Link href="/dashboard">
+            <Button
+              className="w-full"
+              variant="outline"
+            >
               <GoogleIcon />
-            )}
-            {loading ? 'Signing in...' : 'Sign in with Google'}
-          </Button>
+              Sign in with Google
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>
