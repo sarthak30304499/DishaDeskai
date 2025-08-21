@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getLearningRoadmap } from '@/app/actions';
 import { useState } from 'react';
-import { Briefcase, Lightbulb, ListChecks, Loader2, Sparkles } from 'lucide-react';
+import { Briefcase, Lightbulb, ListChecks, Loader2, Sparkles, ExternalLink } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Link from 'next/link';
 
 interface CareerResultsProps {
   careerData: CareerMatcherOutput;
@@ -61,9 +63,51 @@ function LearningRoadmapGenerator({ userSkills, desiredCareer }: { userSkills: s
   );
 }
 
+function JobRecommendations({ recommendations }: { recommendations: CareerMatcherOutput['jobRecommendations'] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+            <Briefcase className="h-6 w-6 text-primary" />
+            <CardTitle>Recommended Job Openings</CardTitle>
+        </div>
+        <CardDescription>Here are some job openings that match your profile.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead className="text-right">Apply</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {recommendations.map((job, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">{job.title}</TableCell>
+                <TableCell>{job.company}</TableCell>
+                <TableCell>{job.location}</TableCell>
+                <TableCell className="text-right">
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href={job.applyLink} target="_blank">
+                      <ExternalLink className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
 
 export default function CareerResults({ careerData, userSkills }: CareerResultsProps) {
-  const { careerMatches, skillsGapAnalysis, careerPathRecommendations } = careerData;
+  const { careerMatches, skillsGapAnalysis, careerPathRecommendations, jobRecommendations } = careerData;
   const matches = careerMatches.split(',').map(s => s.trim()).filter(Boolean);
 
   return (
@@ -86,6 +130,10 @@ export default function CareerResults({ careerData, userSkills }: CareerResultsP
           </div>
         </CardContent>
       </Card>
+      
+      {jobRecommendations && jobRecommendations.length > 0 && (
+        <JobRecommendations recommendations={jobRecommendations} />
+      )}
 
       <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
         <AccordionItem value="item-1">

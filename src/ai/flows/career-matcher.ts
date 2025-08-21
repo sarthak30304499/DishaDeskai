@@ -20,6 +20,13 @@ const CareerMatcherInputSchema = z.object({
 });
 export type CareerMatcherInput = z.infer<typeof CareerMatcherInputSchema>;
 
+const JobRecommendationSchema = z.object({
+  title: z.string().describe('The job title.'),
+  company: z.string().describe('The company name.'),
+  location: z.string().describe('The job location.'),
+  applyLink: z.string().url().describe('A URL to apply for the job.'),
+});
+
 const CareerMatcherOutputSchema = z.object({
   careerMatches: z
     .string()
@@ -30,10 +37,17 @@ const CareerMatcherOutputSchema = z.object({
   careerPathRecommendations: z
     .string()
     .describe('Recommended career paths based on skills and interests.'),
+  jobRecommendations: z
+    .array(JobRecommendationSchema)
+    .describe(
+      'A list of 3-5 job recommendations with titles, companies, locations, and apply links. Use placeholder links like https://jobs.example.com/apply/123.'
+    ),
 });
 export type CareerMatcherOutput = z.infer<typeof CareerMatcherOutputSchema>;
 
-export async function careerMatcher(input: CareerMatcherInput): Promise<CareerMatcherOutput> {
+export async function careerMatcher(
+  input: CareerMatcherInput
+): Promise<CareerMatcherOutput> {
   return careerMatcherFlow(input);
 }
 
@@ -41,7 +55,7 @@ const prompt = ai.definePrompt({
   name: 'careerMatcherPrompt',
   input: {schema: CareerMatcherInputSchema},
   output: {schema: CareerMatcherOutputSchema},
-  prompt: `Based on the following information, provide a list of potential career matches, a skills gap analysis, and career path recommendations.
+  prompt: `Based on the following information, provide a list of potential career matches, a skills gap analysis, career path recommendations, and a list of job recommendations.
 
 Skills: {{{skills}}}
 Interests: {{{interests}}}
@@ -49,6 +63,7 @@ Academics: {{{academics}}}
 Location: {{{location}}}
 
 Ensure the career matches are relevant to the specified location and consider current job market trends.
+For the job recommendations, provide a list of 3-5 job recommendations with titles, companies, locations, and apply links. Use placeholder links like https://jobs.example.com/apply/123.
 `,
 });
 
