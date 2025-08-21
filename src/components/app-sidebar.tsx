@@ -38,7 +38,7 @@ export default function AppSidebar() {
   ];
 
   return (
-    <Sidebar variant="inset" side="left" collapsible="icon">
+    <Sidebar side="left" collapsible="icon">
       <SidebarHeader>
         <Logo className="h-8 w-8 text-primary" />
       </SidebarHeader>
