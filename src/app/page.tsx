@@ -31,7 +31,7 @@ export default function LandingPage() {
           <h1 className="text-2xl font-bold text-foreground">DishaDesk</h1>
         </div>
         <Button asChild variant="ghost">
-          <Link href="/dashboard">Sign In</Link>
+          <Link href="/login">Sign In</Link>
         </Button>
       </header>
 
@@ -45,7 +45,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg">
-              <Link href="/dashboard">
+              <Link href="/login">
                 Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
