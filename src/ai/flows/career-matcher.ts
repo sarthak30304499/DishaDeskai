@@ -40,7 +40,7 @@ const CareerMatcherOutputSchema = z.object({
   jobRecommendations: z
     .array(JobRecommendationSchema)
     .describe(
-      'A list of 3-5 job recommendations with titles, companies, locations, and apply links. Use placeholder links like https://jobs.example.com/apply/123.'
+      'A list of 3-5 job recommendations with titles, companies, locations, and working apply links to real job postings.'
     ),
 });
 export type CareerMatcherOutput = z.infer<typeof CareerMatcherOutputSchema>;
@@ -63,7 +63,7 @@ Academics: {{{academics}}}
 Location: {{{location}}}
 
 Ensure the career matches are relevant to the specified location and consider current job market trends.
-For the job recommendations, provide a list of 3-5 job recommendations with titles, companies, locations, and apply links. Use placeholder links like https://jobs.example.com/apply/123.
+For the job recommendations, provide a list of 3-5 job recommendations with titles, companies, locations, and working apply links to real job postings. For example, a link to a job on a company's career page or a well-known job board.
 `,
 });
 
