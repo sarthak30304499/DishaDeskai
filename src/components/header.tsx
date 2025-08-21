@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Bell, User, LogOut } from 'lucide-react';
+import { Search, Bell, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -47,7 +47,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
       <SidebarTrigger className="sm:hidden" />
       <div className="relative flex-1 md:grow-0">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -57,7 +57,7 @@ export default function Header() {
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
-      <div className="flex items-center gap-2 ml-auto">
+      <div className="ml-auto flex items-center gap-2">
         <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
@@ -76,7 +76,11 @@ export default function Header() {
               <DropdownMenuLabel>{user.displayName || 'My Account'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="https://www.linkedin.com/in/sarthakpalgotra" target="_blank">
+                  Support
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4"/>
