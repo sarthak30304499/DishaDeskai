@@ -32,8 +32,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      // Explicitly set the auth domain for the provider
-      auth.tenantId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
       await setPersistence(auth, browserLocalPersistence)
 
       const result = await signInWithPopup(auth, provider);
