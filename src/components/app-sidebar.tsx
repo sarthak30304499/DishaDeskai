@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Settings,
   UserCircle,
+  LogIn
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -17,9 +18,11 @@ import {
 } from '@/components/ui/sidebar';
 import { Logo } from './icons';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const menuItems = [
     {
@@ -28,9 +31,9 @@ export default function AppSidebar() {
       icon: LayoutDashboard,
     },
     {
-      href: '/profile',
+      href: user ? '/profile' : '/login',
       label: 'Profile',
-      icon: UserCircle,
+      icon: user ? UserCircle : LogIn,
     },
   ];
 

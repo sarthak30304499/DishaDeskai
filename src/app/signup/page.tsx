@@ -31,34 +31,34 @@ const GoogleIcon = () => (
     </svg>
 );
 
-const loginFormSchema = z.object({
+const signupFormSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
 
-type LoginFormValues = z.infer<typeof loginFormSchema>;
+type SignupFormValues = z.infer<typeof signupFormSchema>;
 
-export default function LoginPage() {
-  const { signInWithEmail, signInWithGoogle, loading, error } = useAuth();
+export default function SignupPage() {
+  const { signUpWithEmail, signInWithGoogle, loading, error } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<SignupFormValues>({
+    resolver: zodResolver(signupFormSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  async function onSubmit(data: LoginFormValues) {
+  async function onSubmit(data: SignupFormValues) {
     try {
-      await signInWithEmail(data.email, data.password);
-      toast({ title: 'Login successful!' });
+      await signUpWithEmail(data.email, data.password);
+      toast({ title: 'Signup successful!' });
       router.push('/dashboard');
     } catch (err: any) {
       toast({
-        title: 'Login Failed',
+        title: 'Signup Failed',
         description: err.message,
         variant: 'destructive',
       });
@@ -68,11 +68,11 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      toast({ title: 'Login successful!' });
+      toast({ title: 'Signup successful!' });
       router.push('/dashboard');
     } catch (err: any) {
       toast({
-        title: 'Login Failed',
+        title: 'Signup Failed',
         description: err.message,
         variant: 'destructive',
       });
@@ -87,8 +87,8 @@ export default function LoginPage() {
       </div>
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+          <CardTitle className="text-2xl">Create an Account</CardTitle>
+          <CardDescription>Enter your email and password to get started.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -121,7 +121,7 @@ export default function LoginPage() {
               />
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Sign In
+                Sign Up
               </Button>
             </form>
           </Form>
@@ -131,11 +131,11 @@ export default function LoginPage() {
           </div>
           <Button className="w-full" variant="outline" onClick={handleGoogleSignIn} disabled={loading}>
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
-            Sign in with Google
+            Sign up with Google
           </Button>
         </CardContent>
         <CardFooter className="justify-center text-sm">
-          <p>Don't have an account? <Link href="/signup" className="font-semibold text-primary hover:underline">Sign up</Link></p>
+          <p>Already have an account? <Link href="/login" className="font-semibold text-primary hover:underline">Sign in</Link></p>
         </CardFooter>
       </Card>
     </div>
