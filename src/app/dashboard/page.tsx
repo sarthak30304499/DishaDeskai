@@ -10,11 +10,13 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function DashboardPage() {
   const [results, setResults] = useState<CareerMatcherOutput | null>(null);
+  const [userSkills, setUserSkills] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleResults = (data: CareerMatcherOutput | null, error: string | null = null, loading: boolean = false) => {
+  const handleResults = (data: CareerMatcherOutput | null, skills: string, error: string | null = null, loading: boolean = false) => {
     setResults(data);
+    setUserSkills(skills);
     setError(error);
     setLoading(loading);
   };
@@ -31,7 +33,7 @@ export default function DashboardPage() {
       )}
 
       {results ? (
-        <CareerResults careerData={results} />
+        <CareerResults careerData={results} userSkills={userSkills} />
       ) : (
         !loading && (
           <Card className="border-dashed border-2">

@@ -34,7 +34,7 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface ProfileFormProps {
-  onResults: (data: CareerMatcherOutput | null, error?: string | null, loading?: boolean) => void;
+  onResults: (data: CareerMatcherOutput | null, skills: string, error?: string | null, loading?: boolean) => void;
   loading: boolean;
 }
 
@@ -54,20 +54,21 @@ export default function ProfileForm({ onResults, loading }: ProfileFormProps) {
   });
 
   async function onSubmit(data: ProfileFormValues) {
-    onResults(null, null, true);
+    onResults(null, '', null, true);
+    const { skills } = data;
     // We are not using name, email, phone in the career suggestions
     const { name, email, phone, ...careerData } = data;
     const result = await getCareerSuggestions(careerData);
 
     if (result.error) {
-      onResults(null, result.error, false);
+      onResults(null, '', result.error, false);
       toast({
         title: 'Error',
         description: result.error,
         variant: 'destructive',
       });
     } else if (result.data) {
-      onResults(result.data, null, false);
+      onResults(result.data, skills, null, false);
       toast({
         title: 'Success!',
         description: 'Your career matches have been generated.',

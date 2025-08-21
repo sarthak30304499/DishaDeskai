@@ -12,6 +12,7 @@ import { Briefcase, Lightbulb, ListChecks, Loader2, Sparkles } from 'lucide-reac
 
 interface CareerResultsProps {
   careerData: CareerMatcherOutput;
+  userSkills: string;
 }
 
 function LearningRoadmapGenerator({ userSkills, desiredCareer }: { userSkills: string; desiredCareer: string }) {
@@ -61,7 +62,7 @@ function LearningRoadmapGenerator({ userSkills, desiredCareer }: { userSkills: s
 }
 
 
-export default function CareerResults({ careerData }: CareerResultsProps) {
+export default function CareerResults({ careerData, userSkills }: CareerResultsProps) {
   const { careerMatches, skillsGapAnalysis, careerPathRecommendations } = careerData;
   const matches = careerMatches.split(',').map(s => s.trim()).filter(Boolean);
 
@@ -120,7 +121,7 @@ export default function CareerResults({ careerData }: CareerResultsProps) {
           <CardDescription>Select one of your matched careers to generate a personalized learning roadmap.</CardDescription>
         </CardHeader>
         <CardContent>
-          {matches.length > 0 && <LearningRoadmapGenerator userSkills="" desiredCareer={matches[0]}/>}
+          {matches.length > 0 && <LearningRoadmapGenerator userSkills={userSkills} desiredCareer={matches[0]}/>}
         </CardContent>
       </Card>
     </div>
