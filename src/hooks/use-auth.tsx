@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth';
+import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, type User, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { triggerWelcomeEmail } from '@/app/actions';
 import { useRouter } from 'next/navigation';
@@ -32,6 +32,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
+      // Explicitly set the auth domain for the provider
+      auth.tenantId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+      await setPersistence(auth, browserLocalPersistence)
+
       const result = await signInWithPopup(auth, provider);
       const isNewUser = result.user.metadata.creationTime === result.user.metadata.lastSignInTime;
       
