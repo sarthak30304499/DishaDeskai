@@ -1,10 +1,10 @@
+
 'use client';
 
 import {
   LayoutDashboard,
   Settings,
   UserCircle,
-  LogIn
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -18,11 +18,9 @@ import {
 } from '@/components/ui/sidebar';
 import { Logo } from './icons';
 import Link from 'next/link';
-import { useAuth } from '@/hooks/use-auth';
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
 
   const menuItems = [
     {
@@ -31,23 +29,23 @@ export default function AppSidebar() {
       icon: LayoutDashboard,
     },
     {
-      href: user ? '/profile' : '/login',
+      href: '/profile',
       label: 'Profile',
-      icon: user ? UserCircle : LogIn,
+      icon: UserCircle,
     },
   ];
 
   return (
-    <Sidebar side="left" collapsible="icon">
+    <Sidebar>
       <SidebarHeader>
-        <Logo className="h-8 w-8 text-primary" />
+        <Logo />
       </SidebarHeader>
-      <SidebarMenu className="flex-1">
+      <SidebarMenu>
         {menuItems.map((item) => (
           <SidebarMenuItem key={item.href}>
             <Link href={item.href}>
               <SidebarMenuButton
-                isActive={pathname === item.href}
+                isActive={pathname.startsWith(item.href)}
                 tooltip={item.label}
               >
                 <item.icon />
