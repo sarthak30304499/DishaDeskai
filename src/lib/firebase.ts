@@ -6,7 +6,6 @@ const firebaseConfig = {
   appId: "1:781150870360:web:6dbf9958e464d163cb632d",
   storageBucket: "dishadesk.firebasestorage.app",
   apiKey: "AIzaSyDaZJUWoifY838DCQm1oYPHFkz_J55LjsM",
-  authDomain: "dishadesk.firebaseapp.com",
   messagingSenderId: "781150870360",
 };
 
