@@ -28,12 +28,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = React.useCallback(async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      await setPersistence(auth, browserLocalPersistence)
-
+      await setPersistence(auth, browserLocalPersistence);
       const result = await signInWithPopup(auth, provider);
       const isNewUser = result.user.metadata.creationTime === result.user.metadata.lastSignInTime;
       
@@ -46,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   const signOut = async () => {
     setLoading(true);
@@ -60,8 +59,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const value = React.useMemo(() => ({ user, loading, signInWithGoogle, signOut }), [user, loading, signInWithGoogle]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
