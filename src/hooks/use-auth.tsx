@@ -9,6 +9,9 @@ import {
   signOut as firebaseSignOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  ConfirmationResult
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -22,6 +25,8 @@ interface AuthContextType {
   signUpWithEmail: (email: string, pass: string) => Promise<any>;
   signInWithEmail: (email: string, pass: string) => Promise<any>;
   signOut: () => Promise<void>;
+  sendOtp: (phoneNumber: string, appVerifier: RecaptchaVerifier) => Promise<ConfirmationResult>;
+  confirmOtp: (confirmationResult: ConfirmationResult, otp: string) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -101,6 +106,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const sendOtp = async (phoneNumber: string, appVerifier: RecaptchaVerifier) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      return confirmationResult;
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmOtp = async (confirmationResult: ConfirmationResult, otp: string) => {
+     setLoading(true);
+     setError(null);
+     try {
+        const userCredential = await confirmationResult.confirm(otp);
+        updateUserInDatabase(userCredential.user);
+        return userCredential;
+     } catch (err: any) {
+        setError(err.message);
+        throw err;
+     } finally {
+        setLoading(false);
+     }
+  };
+
 
   const signOut = async () => {
     setLoading(true);
@@ -124,6 +158,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUpWithEmail,
     signInWithEmail,
     signOut,
+    sendOtp,
+    confirmOtp,
   };
 
   return (
