@@ -10,8 +10,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { ref, set, serverTimestamp } from 'firebase/database';
 
 interface AuthContextType {
   user: User | null;
@@ -25,6 +26,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const updateUserInDatabase = (user: User) => {
+  if (!user) return;
+  const userRef = ref(db, 'users/' + user.uid);
+  set(userRef, {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    lastLogin: serverTimestamp(),
+  });
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,6 +47,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      if (user) {
+        updateUserInDatabase(user);
+      }
       setLoading(false);
     });
 
@@ -45,7 +61,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      updateUserInDatabase(result.user);
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -59,6 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+        updateUserInDatabase(userCredential.user);
         return userCredential;
     } catch (err: any) {
         setError(err.message);
@@ -73,6 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+        updateUserInDatabase(userCredential.user);
         return userCredential;
     } catch (err: any) {
         setError(err.message);
