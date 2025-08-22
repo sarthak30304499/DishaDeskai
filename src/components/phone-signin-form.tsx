@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -35,6 +35,23 @@ export default function PhoneSignInForm() {
   const { toast } = useToast();
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [showOtpForm, setShowOtpForm] = useState(false);
+  const recaptchaVerifier = useRef<RecaptchaVerifier | null>(null);
+
+  useEffect(() => {
+    // Initialize reCAPTCHA verifier only once when the component mounts.
+    recaptchaVerifier.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      size: 'invisible',
+      callback: (response: any) => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+      },
+    });
+
+    // Cleanup function to clear the verifier when the component unmounts.
+    return () => {
+      recaptchaVerifier.current?.clear();
+    };
+  }, []);
+
 
   const phoneForm = useForm<{ phone: string }>({
     resolver: zodResolver(phoneFormSchema),
@@ -46,21 +63,18 @@ export default function PhoneSignInForm() {
     defaultValues: { otp: '' },
   });
 
-  const setupRecaptcha = () => {
-    // This will be cleaned up by Firebase automatically
-    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      size: 'invisible',
-      callback: (response: any) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-      },
-    });
-  };
-
   async function onPhoneSubmit(data: { phone: string }) {
+    if (!recaptchaVerifier.current) {
+      toast({
+        title: 'reCAPTCHA not initialized',
+        description: 'Please wait a moment and try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
-      setupRecaptcha();
-      const appVerifier = (window as any).recaptchaVerifier;
-      const result = await sendOtp(data.phone, appVerifier);
+      const result = await sendOtp(data.phone, recaptchaVerifier.current);
       setConfirmationResult(result);
       setShowOtpForm(true);
       toast({ title: 'OTP sent successfully!' });
@@ -69,6 +83,10 @@ export default function PhoneSignInForm() {
         title: 'Failed to send OTP',
         description: err.message,
         variant: 'destructive',
+      });
+       // Reset reCAPTCHA on error to allow retrying
+      recaptchaVerifier.current.render().then((widgetId) => {
+        (window as any).grecaptcha.reset(widgetId);
       });
     }
   }
